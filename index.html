@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DemandAI Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0f172a; color: white; font-family: sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="p-10">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-4xl font-bold mb-2 text-sky-400">DemandAI Service</h1>
+        <p class="text-slate-400 mb-10">Model Tournament & 8-Week Forecasting</p>
+
+        <div class="glass p-6 rounded-2xl mb-10">
+            <div class="flex gap-4">
+                <input type="text" id="stateInput" placeholder="Enter State (e.g. Texas)" class="flex-1 bg-slate-800 border-none p-4 rounded-xl text-white outline-none ring-1 ring-slate-700 focus:ring-sky-500">
+                <button onclick="runAnalysis()" class="bg-sky-500 hover:bg-sky-600 px-10 py-4 rounded-xl font-bold transition">ANALYZE</button>
+            </div>
+        </div>
+
+        <div id="results" class="grid grid-cols-2 gap-6 hidden">
+            <div class="glass p-8 rounded-2xl">
+                <p class="text-slate-400 text-sm uppercase">Winning Model</p>
+                <h2 id="winner" class="text-3xl font-bold text-white">--</h2>
+            </div>
+            <div class="glass p-8 rounded-2xl">
+                <p class="text-slate-400 text-sm uppercase">MAE Score</p>
+                <h2 id="mae" class="text-3xl font-bold text-sky-400">--</h2>
+            </div>
+            <div class="glass p-8 rounded-2xl col-span-2">
+                <p class="text-slate-400 text-sm uppercase mb-4">8-Week Forecast Prediction</p>
+                <div id="forecastList" class="grid grid-cols-4 gap-4 text-sm font-mono"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function runAnalysis() {
+            const state = document.getElementById('stateInput').value;
+            const res = await fetch(`/predict/${state}`);
+            const data = await res.json();
+            
+            if (res.ok) {
+                document.getElementById('results').classList.remove('hidden');
+                document.getElementById('winner').innerText = data.best_model;
+                document.getElementById('mae').innerText = data.mae;
+                
+                const fList = document.getElementById('forecastList');
+                fList.innerHTML = data.forecast_8_weeks.map((v, i) => `
+                    <div class="bg-slate-800 p-2 rounded">Wk ${i+1}: <span class="text-sky-400">${v}</span></div>
+                `).join('');
+            } else { alert(data.detail); }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# Data Handling
+pandas
+numpy
+openpyxl
+
+# Machine Learning & Stats
+scikit-learn
+xgboost
+prophet
+statsmodels
+tensorflow
+joblib
+
+# Backend API
+fastapi
+uvicorn
+python-multipart
+
+# Dashboard UI (Server-side)
+jinja2
